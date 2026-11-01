@@ -1,70 +1,211 @@
-# Project Documentation Template
+# Full-Stack Project Template
 
-A reusable documentation foundation for software, systems, research, and engineering projects.
+A reusable starting point for software engineering projects. This repository combines a maintainable documentation system with a working **React + Vite frontend** and **FastAPI backend**.
 
-This repository is intended to be used as a GitHub repository template. Each new project should copy the structure, then tailor the documents to its actual scope and architecture.
+Use it as a GitHub repository template, then remove or replace parts that do not fit the next project. The stack is a practical default, not a requirement.
 
-## Documentation principles
+## What's included
 
-1. **One source of truth:** each fact has one authoritative home.
-2. **Right-sized documentation:** keep the core set; add specialist documents only when complexity justifies them.
-3. **Evidence over assumptions:** label decisions, hypotheses, constraints, and verified behaviour distinctly.
-4. **Architecture before implementation:** resolve major system boundaries and interfaces before building dependent components.
-5. **Measurable verification:** requirements and design claims should map to tests or other evidence.
-6. **Keep docs current:** update documentation in the same change that alters behaviour, interfaces, constraints, or decisions.
+- **Frontend:** React, TypeScript, Vite, ESLint, Vitest, React Testing Library.
+- **Backend:** FastAPI, Pydantic Settings, Uvicorn, Pytest, Ruff.
+- **API example:** `GET /api/v1/health`, consumed by the frontend.
+- **Local development:** independent frontend and backend processes.
+- **Containers:** Dockerfiles and Docker Compose.
+- **Quality checks:** GitHub Actions CI for linting, type checking, tests, and production builds.
+- **Repository hygiene:** MIT License, security policy, contribution guide, issue and pull-request templates, Dependabot, editor settings.
+- **Documentation:** 10 core project documents plus Architecture Decision Records (ADRs).
 
-## Standard documentation set
+## Repository structure
 
-| File | Responsibility |
+```text
+.
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   ├── workflows/ci.yml
+│   ├── dependabot.yml
+│   └── PULL_REQUEST_TEMPLATE.md
+├── ADR/
+├── backend/
+│   ├── app/api/routes/
+│   ├── app/core/
+│   ├── tests/
+│   ├── Dockerfile
+│   └── pyproject.toml
+├── docs/
+│   ├── 01_PRD.md
+│   ├── 02_TRD.md
+│   ├── 03_Architecture.md
+│   ├── 04_App_Flow.md
+│   ├── 05_UI_Design_Brief.md
+│   ├── 06_Protocol_and_Data_Schema.md
+│   ├── 07_Implementation.md
+│   ├── 08_Security.md
+│   ├── 09_Testing.md
+│   └── 10_Development_Log.md
+├── frontend/
+│   ├── src/
+│   ├── Dockerfile
+│   └── package.json
+├── .editorconfig
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── LICENSE
+├── SECURITY.md
+└── compose.yaml
+```
+
+## Quick start
+
+### Prerequisites
+
+- Node.js 22.12+ and npm.
+- Python 3.12+.
+- Git.
+
+### 1. Clone and configure
+
+```bash
+git clone <YOUR_NEW_REPOSITORY_URL>
+cd <YOUR_NEW_REPOSITORY>
+```
+
+Copy the example environment files:
+
+**Windows PowerShell**
+```powershell
+Copy-Item backend/.env.example backend/.env
+Copy-Item frontend/.env.example frontend/.env
+```
+
+**macOS / Linux**
+```bash
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+```
+
+### 2. Start the backend
+
+```bash
+cd backend
+python -m venv .venv
+```
+
+Activate the virtual environment:
+
+**Windows PowerShell**
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+**macOS / Linux**
+```bash
+source .venv/bin/activate
+```
+
+Install and run:
+
+```bash
+python -m pip install --upgrade pip
+pip install -e ".[dev]"
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Backend endpoints:
+- Health: http://localhost:8000/api/v1/health
+- Swagger UI: http://localhost:8000/docs
+- OpenAPI schema: http://localhost:8000/openapi.json
+
+### 3. Start the frontend
+
+Open a second terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open http://localhost:5173. The starter screen checks the backend health endpoint.
+
+### 4. Run checks
+
+Frontend, from `frontend/`:
+
+```bash
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+```
+
+Backend, from `backend/` with the virtual environment activated:
+
+```bash
+ruff check .
+ruff format --check .
+pytest
+```
+
+## Run with Docker
+
+From the repository root:
+
+```bash
+docker compose up --build
+```
+
+- Frontend: http://localhost:5173
+- Backend: http://localhost:8000
+- API docs: http://localhost:8000/docs
+
+Stop containers with `docker compose down`. The frontend container serves a production build through Nginx; use the separate commands above for hot-reload development.
+
+## Configuration
+
+| File | Purpose |
 |---|---|
-| `01_PRD.md` | Product/problem definition, users, scope, requirements, success metrics |
-| `02_TRD.md` | Technical constraints, technology choices, platform/runtime requirements |
-| `03_Architecture.md` | System context, components, deployment/runtime views, key flows |
-| `04_App_Flow.md` | User journeys, states, transitions, error and recovery flows |
-| `05_UI_Design_Brief.md` | UX principles, screen inventory, interaction and accessibility specifications |
-| `06_Protocol_and_Data_Schema.md` | API/message contracts, schemas, events, persistence model if applicable |
-| `07_Implementation.md` | Development phases, dependencies, milestones, exit criteria |
-| `08_Security.md` | Threat model, trust boundaries, identity, permissions, data protection |
-| `09_Testing.md` | Test strategy, acceptance criteria, performance/reliability validation |
-| `10_Development_Log.md` | Chronological progress notes and links to meaningful changes |
+| `backend/.env.example` | Backend name, environment, API prefix, allowed CORS origins |
+| `frontend/.env.example` | Browser-visible API base URL |
+| `backend/pyproject.toml` | Python dependencies and Ruff/Pytest configuration |
+| `frontend/package.json` | JavaScript dependencies and npm scripts |
+| `compose.yaml` | Local container orchestration |
 
-Architecture Decision Records live in `ADR/`. Start with `ADR/README.md` and create one numbered record per significant decision.
+Only variables prefixed with `VITE_` are exposed to browser code. Never put secrets in frontend environment variables.
 
-## Start a new project
+## Documentation
 
-1. Use **Use this template** on GitHub, or clone this repository and create a new repository.
-2. Replace all `[PLACEHOLDER]` values and remove guidance that does not apply.
-3. Write the PRD first; agree on scope and measurable outcomes.
-4. Record technical constraints and choices in the TRD.
-5. Design the architecture and document consequential trade-offs as ADRs.
-6. Define protocol/data contracts before implementing components that depend on them.
-7. Add app flows and UI specifications only where the project has a user-facing interface.
-8. Define security and test strategy early, not after implementation.
-9. Build the implementation roadmap from dependencies and acceptance criteria.
-10. Keep the development log concise; link commits, PRs, issues, experiments, and ADRs rather than duplicating them.
+Start with [docs/01_PRD.md](docs/01_PRD.md), then use the remaining documents according to their responsibilities:
 
-## Tailor the template
+1. [Product Requirements](docs/01_PRD.md)
+2. [Technical Requirements](docs/02_TRD.md)
+3. [Architecture](docs/03_Architecture.md)
+4. [Application Flow](docs/04_App_Flow.md)
+5. [UI Design Brief](docs/05_UI_Design_Brief.md)
+6. [Protocol and Data Schema](docs/06_Protocol_and_Data_Schema.md)
+7. [Implementation Plan](docs/07_Implementation.md)
+8. [Security](docs/08_Security.md)
+9. [Testing](docs/09_Testing.md)
+10. [Development Log](docs/10_Development_Log.md)
 
-- **No backend/database:** explicitly state that in the protocol/data schema document; describe local or ephemeral state only if relevant. Do not invent a database.
-- **No UI:** mark the UI/app-flow documents as not applicable with a short rationale, or replace them with operator/workflow specifications.
-- **Research project:** adapt PRD to research objectives and hypotheses; include methodology, reproducibility, datasets, and limitations in TRD/Testing or add a focused research methodology document.
-- **Small project:** retain only the documents that add value; link to the relevant section in another document rather than copying content.
+Significant architectural decisions belong in [ADR/](ADR/README.md).
 
-## Repository conventions
+## Reusing this repository
 
-- Keep numbered core filenames stable for predictable navigation.
-- Use relative links between documents.
-- Use ISO dates (`YYYY-MM-DD`) in logs and ADR metadata.
-- Use `TBD` only with an owner or next action; otherwise state the uncertainty explicitly.
-- Never commit secrets, private credentials, or real personal data.
-- Avoid duplicating requirements, schemas, and decisions across files.
+1. Enable **Template repository** under GitHub Settings → General.
+2. Use **Use this template → Create a new repository** for each project.
+3. Rename the project, update this README, and replace placeholders in `docs/`.
+4. Keep the React/FastAPI scaffold only when it suits the project. Remove unused layers rather than preserving dead boilerplate.
+5. Review the MIT license and replace it if the new project requires different licensing.
+6. Commit `frontend/package-lock.json` after installing dependencies for reproducible npm installs.
+7. Update CI, security policy, deployment, and environment configuration to match the new project's actual requirements.
 
-## Suggested workflow
+## Important defaults
 
-For a significant change:
-1. Update the owning document.
-2. Update or create an ADR if a decision changes.
-3. Update impacted interfaces, flows, implementation steps, and tests.
-4. Include documentation changes in the same pull request as the implementation where practical.
+- No database, authentication provider, or cloud backend is included. Add them only when requirements justify them.
+- The sample health endpoint is not a production readiness or security check.
+- CORS is configured for local development by default. Set explicit production origins before deployment.
+- The MIT license is a default choice. Confirm it matches the licensing needs of each project.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for review expectations.
+## Contributing and security
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).

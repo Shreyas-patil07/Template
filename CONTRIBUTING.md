@@ -1,28 +1,36 @@
-# Contributing to a Project Using This Template
+# Contributing
 
-## Documentation changes
+## Before opening a pull request
 
-- Edit the document that owns the information; avoid copying it into other documents.
-- Use relative links to authoritative sections.
-- Keep statements precise and testable.
-- Distinguish **Confirmed**, **Proposed**, **Assumption**, and **Open question** where ambiguity could mislead implementation.
-- Include rationale and consequences for non-obvious choices.
-- Update the development log for meaningful milestones, experiments, and project-level changes. Do not log every minor edit.
+- Keep changes focused and explain the reasoning.
+- Update the document that owns any changed requirement, interface, or architectural decision.
+- Add or update tests for changed behaviour.
+- Run the relevant frontend/backend checks.
+- Update environment examples when configuration changes.
+- Never commit secrets, credentials, private keys, or real personal data.
+- Link related issues and ADRs.
 
-## Change checklist
+## Frontend checks
 
-- [ ] Requirements and scope remain consistent.
-- [ ] Architecture and interfaces reflect the proposed behaviour.
-- [ ] Relevant ADR exists for a significant decision.
-- [ ] Security and privacy implications are considered.
-- [ ] Test and acceptance criteria cover the change.
-- [ ] No secrets, credentials, or personal data are committed.
-- [ ] Links and document references are valid.
+From `frontend/`:
 
-## Writing conventions
+```bash
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+```
 
-- Use concise headings and short sections.
-- Prefer tables for compact comparisons and inventories.
-- Use Mermaid for diagrams when it improves clarity.
-- Include units, platform versions, protocol versions, and assumptions where applicable.
-- Do not present targets as achieved results.
+## Backend checks
+
+From `backend/`:
+
+```bash
+ruff check .
+ruff format --check .
+pytest
+```
+
+## Documentation conventions
+
+See [README.md](README.md) for the repository structure and [docs/](docs/) for the documentation system. Keep each fact in one authoritative place. Distinguish confirmed behaviour from assumptions and proposals.
